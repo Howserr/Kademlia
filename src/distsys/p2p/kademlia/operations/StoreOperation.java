@@ -32,7 +32,7 @@ public class StoreOperation implements Operation, Receiver {
 
         StoreRequest message = new StoreRequest(self, contentKey, contentToStore);
 
-        int replicaCount = 15;
+        int replicaCount = 20;
         int counter = 0;
         for (Contact contact : contacts) {
             if (counter >= replicaCount) {
@@ -46,8 +46,6 @@ public class StoreOperation implements Operation, Receiver {
     public ID getContentKey() {
         return contentKey;
     }
-
-
 
     @Override
     public synchronized void receive(Message incoming, int communicationId) throws IOException {

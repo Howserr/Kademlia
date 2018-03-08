@@ -1,5 +1,6 @@
 package distsys.p2p.kademlia.routing;
 
+import java.math.BigInteger;
 import java.util.Comparator;
 
 public class ContactDistanceComparator implements Comparator<Contact> {
@@ -10,9 +11,9 @@ public class ContactDistanceComparator implements Comparator<Contact> {
     }
 
     @Override
-    public int compare(Contact c1, Contact c2) {
-        ID xor1 = c1.id.xor(target);
-        ID xor2 = c2.id.xor(target);
+    public int compare(Contact contact1, Contact contact2) {
+        BigInteger xor1 = contact1.id.xor(target).getBigInt();
+        BigInteger xor2 = contact2.id.xor(target).getBigInt();
 
         return xor1.compareTo(xor2);
     }

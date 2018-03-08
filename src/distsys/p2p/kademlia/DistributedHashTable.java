@@ -32,7 +32,7 @@ public class DistributedHashTable {
         this.hashtable.put(key, value);
         try {
             this.printWriter = new PrintWriter(new FileWriter(testFileName, true));
-            printWriter.println(self.id.toHexString() + "," + value);
+            printWriter.println(self.id.getBigInt() + "," + value);
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

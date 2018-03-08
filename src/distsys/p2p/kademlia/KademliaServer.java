@@ -65,9 +65,10 @@ public class KademliaServer {
     }
 
     private void sendMessage(Contact receipient, Message message, int communicationId) throws IOException {
+        // This top bit creates a stream that we can send the data too (i.e your string/message)
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(); DataOutputStream dataOut = new DataOutputStream(byteOut);) {
-            dataOut.writeInt(communicationId);
-            dataOut.writeByte(message.getCode());
+            dataOut.writeInt(communicationId); // ignore this
+            dataOut.writeByte(message.getCode()); // ignore this
             message.toStream(dataOut);
             dataOut.close();
 

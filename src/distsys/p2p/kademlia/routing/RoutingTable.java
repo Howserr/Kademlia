@@ -37,9 +37,7 @@ public class RoutingTable {
         List<Contact> contacts = new ArrayList<>();
 
         for (Bucket bucket: buckets) {
-            for (Contact contact: bucket.getAll()) {
-                contacts.add(contact);
-            }
+            contacts.addAll(bucket.getAll());
         }
         return contacts;
     }
@@ -71,7 +69,8 @@ public class RoutingTable {
 
     public List<Contact> findClosest(ID target, Contact origin, int count) {
         TreeSet<Contact> sortedSet = new TreeSet<>(new ContactDistanceComparator(target));
-        sortedSet.addAll(getAll());
+        List<Contact> contactsFromBucket = getAll();
+        sortedSet.addAll(contactsFromBucket);
         sortedSet.remove(origin);
         List<Contact> closest = new ArrayList<>(count);
 

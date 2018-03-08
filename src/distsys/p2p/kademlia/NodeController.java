@@ -26,7 +26,7 @@ public class NodeController implements Runnable {
     private StopWatch stopwatch;
     private PrintWriter printWriter;
 
-    private String testFileName = "speedtest-15-15000.txt";
+    private String testFileName = "speedtest-20-20000.txt";
 
     public NodeController(int port) {
         try {
@@ -106,11 +106,12 @@ public class NodeController implements Runnable {
         }
         stopwatch.stop();
         long time = stopwatch.getNanoTime();
+        int numberOfFindNodesCompleted = lookupOperation.getNumberOfFindNodesCompleted();
         System.out.println("Get operation execution time: " + time + "nano seconds");
         boolean success = "" != result;
         try {
             this.printWriter = new PrintWriter(new FileWriter(testFileName, true));
-            printWriter.println("get," + time + "," + success);
+            printWriter.println("get," + time + "," + success + "," + numberOfFindNodesCompleted);
             printWriter.close();
         } catch (Exception e) {
             e.printStackTrace();

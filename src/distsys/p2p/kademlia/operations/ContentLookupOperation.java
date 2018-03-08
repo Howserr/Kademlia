@@ -24,6 +24,9 @@ public class ContentLookupOperation implements Operation, Receiver {
     private final ContactDistanceComparator comparator;
     private String content;
 
+    private boolean running;
+    private int numberOfFindNodesCompleted;
+
     public ContentLookupOperation(KademliaServer server, Contact self, ID target) {
         this.server = server;
         this.self = self;
@@ -37,6 +40,7 @@ public class ContentLookupOperation implements Operation, Receiver {
     @Override
     public synchronized void execute() throws IOException {
         try {
+            this.running = true;
             // So as not to cause a socket exception if own contact is returned and slips through
             contacts.put(this.self, ContactStatus.CONTACTED);
             this.addContacts(this.server.getRoutingTable().getAll());
@@ -51,15 +55,21 @@ public class ContentLookupOperation implements Operation, Receiver {
                     break;
                 }
             }
+            this.running = false;
             this.server.getRoutingTable().setUnresponsiveContacts(this.getFailedContacts());
         }
         catch (InterruptedException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
     public String getContent() {
         return this.content;
+    }
+
+    public int getNumberOfFindNodesCompleted() {
+        return this.numberOfFindNodesCompleted;
     }
 
     public void addContacts(List<Contact> contacts) {
@@ -144,6 +154,10 @@ public class ContentLookupOperation implements Operation, Receiver {
             this.server.getRoutingTable().update(origin);
             this.contacts.put(origin, ContactStatus.CONTACTED);
             this.content = message.getContent();
+
+            if (this.running) {
+                this.numberOfFindNodesCompleted++;
+            }
         }
         if (incoming instanceof FindNodeResponse) {
             System.out.println("received find node response to content lookup");
@@ -152,6 +166,10 @@ public class ContentLookupOperation implements Operation, Receiver {
             this.server.getRoutingTable().update(origin);
             this.contacts.put(origin, ContactStatus.CONTACTED);
             this.addContacts(message.getContacts());
+
+            if (this.running) {
+                this.numberOfFindNodesCompleted++;
+            }
         }
         this.communicationsAwaiting.remove(communicationId);
         this.processMessaging();

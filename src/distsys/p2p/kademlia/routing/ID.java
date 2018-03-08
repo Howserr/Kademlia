@@ -9,7 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.time.Clock;
+import java.math.BigInteger;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Random;
@@ -111,13 +111,18 @@ public class ID implements Comparable<ID>, Serializable, Streamable {
         return IDLENGTH * 8 - 1;
     }
 
+    public BigInteger getBigInt() {
+        return new BigInteger(1, this.id);
+    }
+
     @Override
     public int compareTo(ID other) {
         for (int i = 0; i < IDLENGTH; i++) {
             if (id[i] != other.id[i]) {
                 String s1 = String.format("%8s", Integer.toBinaryString(id[i] & 0xFF)).replace(' ', '0');
                 String s2 = String.format("%8s", Integer.toBinaryString(other.id[i] & 0xFF)).replace(' ', '0');
-                return s1.compareTo(s2);
+                int compareValue = s1.compareTo(s2);
+                return compareValue;
             }
         }
         return 0;

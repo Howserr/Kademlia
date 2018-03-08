@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class NodeLookupOperation implements Operation, Receiver {
-    private int maxRuntime = 30000;
+    private int maxRuntime = 3000000;
 
     private final KademliaServer server;
     private final Contact self;
@@ -52,6 +52,7 @@ public class NodeLookupOperation implements Operation, Receiver {
             this.server.getRoutingTable().setUnresponsiveContacts(this.getFailedNodes());
         }
         catch (InterruptedException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -69,7 +70,12 @@ public class NodeLookupOperation implements Operation, Receiver {
     }
 
     private boolean processMessages() throws IOException {
-        if (3 <= this.communicationsAwaiting.size()) {
+
+        if (getClosestContacts(ContactStatus.CONTACTED).size() > 20) {
+            return true;
+        }
+
+        if (this.communicationsAwaiting.size() > 1) {
             return false;
         }
 
@@ -78,7 +84,7 @@ public class NodeLookupOperation implements Operation, Receiver {
             return true;
         }
 
-        for (int i = 0; (this.communicationsAwaiting.size() < 3) && (i < unasked.size()); i++) {
+        for (int i = 0; (this.communicationsAwaiting.size() < 1) && (i < unasked.size()); i++) {
             Contact contact = unasked.get(i);
             int comm = server.sendMessage(contact, findNodeRequest, this);
             this.contacts.put(contact, ContactStatus.AWAITING);
